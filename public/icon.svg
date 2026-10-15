@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="50%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.2" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#gisGrad)" />
+  <!-- subtle map grid line pattern in background -->
+  <path d="M 64 256 H 448 M 256 64 V 448 M 128 128 L 384 384 M 128 384 L 384 128" stroke="#ffffff" stroke-width="2" stroke-opacity="0.15" stroke-dasharray="8 8" fill="none" />
+  
+  <!-- Central Checklist Icon with Checkmark -->
+  <g filter="url(#shadow)">
+    <!-- Clipboard card -->
+    <rect x="120" y="110" width="272" height="310" rx="32" fill="#ffffff" />
+    <!-- Clip on top -->
+    <rect x="196" y="86" width="120" height="48" rx="14" fill="#0369a1" />
+    <circle cx="256" cy="110" r="10" fill="#ffffff" />
+    
+    <!-- Checklist items inside -->
+    <!-- Line 1 with checkmark -->
+    <circle cx="168" cy="180" r="16" fill="#10b981" />
+    <path d="M 160 180 L 166 186 L 176 174" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="198" y="174" width="160" height="12" rx="6" fill="#cbd5e1" />
+    
+    <!-- Line 2 with checkmark -->
+    <circle cx="168" cy="240" r="16" fill="#10b981" />
+    <path d="M 160 240 L 166 246 L 176 234" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="198" y="234" width="130" height="12" rx="6" fill="#cbd5e1" />
+    
+    <!-- Line 3 with empty circle (pending) -->
+    <circle cx="168" cy="300" r="16" fill="none" stroke="#94a3b8" stroke-width="4" />
+    <rect x="198" y="294" width="150" height="12" rx="6" fill="#94a3b8" />
+
+    <!-- Line 4 with empty circle (pending) -->
+    <circle cx="168" cy="360" r="16" fill="none" stroke="#94a3b8" stroke-width="4" />
+    <rect x="198" y="354" width="110" height="12" rx="6" fill="#cbd5e1" />
+  </g>
+</svg>

@@ -1,0 +1,6 @@
+{
+  "name": "Tareas de Oficina - GIS Paraná",
+  "description": "Ayuda memoria diaria de tareas de oficina con enlaces para el Departamento de GIS y Estadísticas de la Municipalidad de Paraná.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
