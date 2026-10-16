@@ -34,14 +34,13 @@ const STORAGE_KEY_ACTIVE_TAB = 'gis_parana_active_tab';
 const STORAGE_KEY_ORDER_V2 = 'gis_parana_tareas_order_v2';
 const STORAGE_KEY_EXPTES_SIE = 'gis_parana_exptes_sie_v1';
 
-// 7 tareas iniciales para la pestaña "tareas diarias"
+// 6 tareas iniciales para la pestaña "tareas diarias" (orden oficial definitivo)
 const INITIAL_DAILY_TASKS_SEED: Omit<Task, 'id' | 'createdAt'>[] = [
   { text: 'TDI - bandeja de entrada', url: '', completed: false },
   { text: 'TDO - portal gestión de obra', url: '', completed: false },
-  { text: 'SIE - sistema interno despacho', url: '', completed: false },
-  { text: 'Obras Eléctricas (drive GIS)', url: '', completed: false },
+  { text: 'SIE - interno despacho (imprimir captura)', url: '', completed: false },
+  { text: 'Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones', url: '', completed: false },
   { text: 'Liquidaciones (drive Factibilidades)', url: '', completed: false },
-  { text: 'SIE - cargar Subterráneas y Demoliciones', url: '', completed: false },
   { text: 'Buscar expedientes en Área Técnica', url: '', completed: false },
 ];
 
@@ -61,11 +60,21 @@ function getCanonicalDailyRank(text: string): number {
   const t = text.toLowerCase();
   if (t.includes('tdi')) return 0;
   if (t.includes('tdo')) return 1;
-  if (t.includes('abrir sie') || (t.includes('sie') && t.includes('despacho'))) return 2;
-  if (t.includes('obras eléctricas') || t.includes('obras electricas') || t.includes('eléctricas') || t.includes('electricas')) return 3;
+  if (t.includes('despacho') || t.includes('captura')) return 2;
+  if (
+    t.includes('planos') ||
+    t.includes('eléctricos') ||
+    t.includes('electricas') ||
+    t.includes('eléctricas') ||
+    t.includes('subterráneas') ||
+    t.includes('subterraneas') ||
+    t.includes('aéreos') ||
+    t.includes('aereos') ||
+    t.includes('demoliciones') ||
+    t.includes('alarma')
+  ) return 3;
   if (t.includes('liquidaciones')) return 4;
-  if (t.includes('subterráneas') || t.includes('subterraneas') || t.includes('demoliciones') || t.includes('alarma')) return 5;
-  if (t.includes('expediente') || t.includes('área técnica') || t.includes('area tecnica')) return 6;
+  if (t.includes('expediente') || t.includes('área técnica') || t.includes('area tecnica')) return 5;
   if (t.includes('sie')) return 2;
   return 999;
 }
@@ -141,63 +150,58 @@ export default function App() {
       }));
     }
 
-    // Asegurar que "SIE" esté presente
-    const sieTaskText = 'SIE - sistema interno despacho';
-    const hasSie = loadedDailyTasks.some(
-      (t) => t.text.toLowerCase().includes('sie') && t.text.toLowerCase().includes('despacho')
-    );
-    if (!hasSie) {
-      loadedDailyTasks.push({
-        id: generateId() + '-sie',
-        text: sieTaskText,
-        url: '',
-        completed: false,
-        createdAt: Date.now(),
-      });
-    }
+    // Actualizar nombres y consolidar al nuevo esquema oficial de 6 cards
+    const cardPlanosText = 'Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones';
+    const cardSieDespachoText = 'SIE - interno despacho (imprimir captura)';
 
-    // Asegurar que "Obras Eléctricas (drive GIS)" esté presente
-    const obrasElectricasTaskText = 'Obras Eléctricas (drive GIS)';
-    const hasObrasElectricas = loadedDailyTasks.some(
-      (t) => t.text.toLowerCase().includes('eléctricas') || t.text.toLowerCase().includes('electricas')
-    );
-    if (!hasObrasElectricas) {
-      loadedDailyTasks.push({
-        id: generateId() + '-obras-electricas',
-        text: obrasElectricasTaskText,
-        url: '',
-        completed: false,
-        createdAt: Date.now(),
-      });
-    }
-
-    // Actualizar automáticamente tareas con nombres anteriores conservando intactos sus enlaces y estados
-    const newSieDemolicionesText = 'SIE - cargar Subterráneas y Demoliciones';
-    loadedDailyTasks = loadedDailyTasks.map((t) => {
-      let updatedText = t.text;
-      if (t.text.toLowerCase().includes('alarma') && t.text.toLowerCase().includes('obras nuevas')) {
-        updatedText = newSieDemolicionesText;
+    let foundMergedCard = false;
+    const filteredDaily: Task[] = [];
+    for (const t of loadedDailyTasks) {
+      const lower = t.text.toLowerCase();
+      if (lower.includes('tdi')) {
+        filteredDaily.push({ ...t, text: 'TDI - bandeja de entrada' });
+      } else if (lower.includes('tdo')) {
+        filteredDaily.push({ ...t, text: 'TDO - portal gestión de obra' });
       } else if (
-        t.text.toLowerCase().includes('subterráneas') ||
-        t.text.toLowerCase().includes('subterraneas') ||
-        t.text.toLowerCase().includes('demoliciones')
+        lower.includes('despacho') || 
+        (lower.includes('sie') && !lower.includes('cargar') && !lower.includes('subterráneas') && !lower.includes('subterraneas') && !lower.includes('demoliciones') && !lower.includes('planos'))
       ) {
-        updatedText = newSieDemolicionesText;
-      } else if (t.text.toLowerCase().includes('eléctricas') || t.text.toLowerCase().includes('electricas')) {
-        updatedText = 'Obras Eléctricas (drive GIS)';
-      } else if (t.text === 'Ver TDI - bandeja de entrada') {
-        updatedText = 'TDI - bandeja de entrada';
-      } else if (t.text === 'Ver TDO - portal gestión de obra') {
-        updatedText = 'TDO - portal gestión de obra';
-      } else if (t.text === 'Abrir SIE - sistema interno despacho') {
-        updatedText = 'SIE - sistema interno despacho';
-      } else if (t.text === 'Ver Liquidaciones (drive Factibilidades)') {
-        updatedText = 'Liquidaciones (drive Factibilidades)';
+        filteredDaily.push({ ...t, text: cardSieDespachoText });
+      } else if (
+        lower.includes('planos') ||
+        lower.includes('eléctricas') ||
+        lower.includes('electricas') ||
+        lower.includes('subterráneas') ||
+        lower.includes('subterraneas') ||
+        lower.includes('aéreos') ||
+        lower.includes('aereos') ||
+        lower.includes('demoliciones') ||
+        lower.includes('alarma')
+      ) {
+        if (!foundMergedCard) {
+          foundMergedCard = true;
+          filteredDaily.push({
+            ...t,
+            text: cardPlanosText,
+          });
+        } else {
+          // Si había una segunda tarjeta que se fusiona, absorbemos su URL si la primera no tenía
+          const target = filteredDaily.find((item) => item.text === cardPlanosText);
+          if (target && !target.url && t.url) {
+            target.url = t.url;
+          }
+        }
+      } else if (lower.includes('liquidaciones')) {
+        filteredDaily.push({ ...t, text: 'Liquidaciones (drive Factibilidades)' });
+      } else if (lower.includes('expediente') || lower.includes('área técnica') || lower.includes('area tecnica')) {
+        filteredDaily.push({ ...t, text: 'Buscar expedientes en Área Técnica' });
+      } else {
+        filteredDaily.push(t);
       }
-      return { ...t, text: updatedText };
-    });
+    }
+    loadedDailyTasks = filteredDaily;
 
-    // Asegurar que las 7 tareas oficiales por defecto estén siempre presentes
+    // Asegurar que las 6 tareas oficiales por defecto estén siempre presentes
     // sin perder ningún enlace (url) cargado por el usuario
     INITIAL_DAILY_TASKS_SEED.forEach((seedTask) => {
       const rank = getCanonicalDailyRank(seedTask.text);
@@ -216,11 +220,10 @@ export default function App() {
     // Ordenar de forma obligatoria las tareas institucionales según el orden oficial:
     // 1. TDI - bandeja de entrada
     // 2. TDO - portal gestión de obra
-    // 3. SIE - sistema interno despacho
-    // 4. Obras Eléctricas (drive GIS)
+    // 3. SIE - interno despacho (imprimir captura)
+    // 4. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
     // 5. Liquidaciones (drive Factibilidades)
-    // 6. SIE - cargar Subterráneas y Demoliciones
-    // 7. Buscar expedientes en Área Técnica
+    // 6. Buscar expedientes en Área Técnica
     loadedDailyTasks.sort((a, b) => {
       const rankA = getCanonicalDailyRank(a.text);
       const rankB = getCanonicalDailyRank(b.text);
