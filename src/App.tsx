@@ -37,8 +37,8 @@ const STORAGE_KEY_EXPTES_SIE = 'gis_parana_exptes_sie_v1';
 // 6 tareas iniciales para la pestaña "tareas diarias" (orden oficial definitivo)
 const INITIAL_DAILY_TASKS_SEED: Omit<Task, 'id' | 'createdAt'>[] = [
   { text: 'TDI - bandeja de entrada', url: '', completed: false },
-  { text: 'TDO - portal gestión de obra', url: '', completed: false },
   { text: 'SIE - interno despacho (imprimir captura)', url: '', completed: false },
+  { text: 'TDO - portal gestión de obra', url: '', completed: false },
   { text: 'Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones', url: '', completed: false },
   { text: 'Liquidaciones (drive Factibilidades)', url: '', completed: false },
   { text: 'Buscar expedientes en Área Técnica', url: '', completed: false },
@@ -59,8 +59,8 @@ function generateId(): string {
 function getCanonicalDailyRank(text: string): number {
   const t = text.toLowerCase();
   if (t.includes('tdi')) return 0;
-  if (t.includes('tdo')) return 1;
-  if (t.includes('despacho') || t.includes('captura')) return 2;
+  if (t.includes('despacho') || t.includes('captura')) return 1;
+  if (t.includes('tdo')) return 2;
   if (
     t.includes('planos') ||
     t.includes('eléctricos') ||
@@ -75,7 +75,7 @@ function getCanonicalDailyRank(text: string): number {
   ) return 3;
   if (t.includes('liquidaciones')) return 4;
   if (t.includes('expediente') || t.includes('área técnica') || t.includes('area tecnica')) return 5;
-  if (t.includes('sie')) return 2;
+  if (t.includes('sie')) return 1;
   return 999;
 }
 
@@ -99,7 +99,7 @@ export default function App() {
   const [showCompletedMonthly, setShowCompletedMonthly] = useState(false);
   const [exptesSie, setExptesSie] = useState<string>(() => {
     const saved = localStorage.getItem(STORAGE_KEY_EXPTES_SIE);
-    return saved !== null ? saved : '79';
+    return saved !== null ? saved : '00';
   });
 
   const handleExptesSieChange = (val: string) => {
@@ -219,8 +219,8 @@ export default function App() {
 
     // Ordenar de forma obligatoria las tareas institucionales según el orden oficial:
     // 1. TDI - bandeja de entrada
-    // 2. TDO - portal gestión de obra
-    // 3. SIE - interno despacho (imprimir captura)
+    // 2. SIE - interno despacho (imprimir captura)
+    // 3. TDO - portal gestión de obra
     // 4. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
     // 5. Liquidaciones (drive Factibilidades)
     // 6. Buscar expedientes en Área Técnica
@@ -647,7 +647,7 @@ export default function App() {
                 type="text"
                 value={exptesSie}
                 onChange={(e) => handleExptesSieChange(e.target.value)}
-                placeholder="0"
+                placeholder="00"
                 aria-label="Cantidad de expedientes en SIE"
                 title="Editar cantidad de expedientes en SIE (guardado automático)"
                 className="w-20 sm:w-24 h-14 sm:h-16 rounded-2xl bg-slate-200/90 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 text-center text-3xl sm:text-4xl font-bold text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-sky-500 focus:bg-white dark:focus:bg-slate-900 shadow-2xs transition-all"
