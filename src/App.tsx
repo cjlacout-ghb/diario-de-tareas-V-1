@@ -36,11 +36,11 @@ const STORAGE_KEY_EXPTES_SIE = 'gis_parana_exptes_sie_v1';
 
 // 6 tareas iniciales para la pestaña "tareas diarias" (orden oficial definitivo)
 const INITIAL_DAILY_TASKS_SEED: Omit<Task, 'id' | 'createdAt'>[] = [
-  { text: 'TDI - bandeja de entrada', url: '', completed: false },
   { text: 'SIE - interno despacho (imprimir captura)', url: '', completed: false },
+  { text: 'TDI - bandeja de entrada', url: '', completed: false },
   { text: 'TDO - portal gestión de obra', url: '', completed: false },
-  { text: 'Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones', url: '', completed: false },
   { text: 'Liquidaciones (drive Factibilidades)', url: '', completed: false },
+  { text: 'Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones', url: '', completed: false },
   { text: 'Buscar expedientes en Área Técnica', url: '', completed: false },
 ];
 
@@ -58,9 +58,15 @@ function generateId(): string {
 // Jerarquía y orden oficial exacto para la pestaña "tareas diarias"
 function getCanonicalDailyRank(text: string): number {
   const t = text.toLowerCase();
-  if (t.includes('tdi')) return 0;
-  if (t.includes('despacho') || t.includes('captura')) return 1;
+  // 1. SIE - interno despacho (imprimir captura)
+  if (t.includes('despacho') || t.includes('captura')) return 0;
+  // 2. TDI - bandeja de entrada
+  if (t.includes('tdi')) return 1;
+  // 3. TDO - portal gestión de obra
   if (t.includes('tdo')) return 2;
+  // 4. Liquidaciones (drive Factibilidades)
+  if (t.includes('liquidaciones')) return 3;
+  // 5. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
   if (
     t.includes('planos') ||
     t.includes('eléctricos') ||
@@ -72,10 +78,10 @@ function getCanonicalDailyRank(text: string): number {
     t.includes('aereos') ||
     t.includes('demoliciones') ||
     t.includes('alarma')
-  ) return 3;
-  if (t.includes('liquidaciones')) return 4;
+  ) return 4;
+  // 6. Buscar expedientes en Área Técnica
   if (t.includes('expediente') || t.includes('área técnica') || t.includes('area tecnica')) return 5;
-  if (t.includes('sie')) return 1;
+  if (t.includes('sie')) return 0;
   return 999;
 }
 
@@ -218,11 +224,11 @@ export default function App() {
     });
 
     // Ordenar de forma obligatoria las tareas institucionales según el orden oficial:
-    // 1. TDI - bandeja de entrada
-    // 2. SIE - interno despacho (imprimir captura)
+    // 1. SIE - interno despacho (imprimir captura)
+    // 2. TDI - bandeja de entrada
     // 3. TDO - portal gestión de obra
-    // 4. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
-    // 5. Liquidaciones (drive Factibilidades)
+    // 4. Liquidaciones (drive Factibilidades)
+    // 5. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
     // 6. Buscar expedientes en Área Técnica
     loadedDailyTasks.sort((a, b) => {
       const rankA = getCanonicalDailyRank(a.text);
