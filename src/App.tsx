@@ -34,14 +34,48 @@ const STORAGE_KEY_ACTIVE_TAB = 'gis_parana_active_tab';
 const STORAGE_KEY_ORDER_V2 = 'gis_parana_tareas_order_v2';
 const STORAGE_KEY_EXPTES_SIE = 'gis_parana_exptes_sie_v1';
 
-// 6 tareas iniciales para la pestaña "tareas diarias" (orden oficial definitivo)
+// 8 tareas iniciales para la pestaña "tareas diarias" (orden y enlaces oficiales definitivos)
 const INITIAL_DAILY_TASKS_SEED: Omit<Task, 'id' | 'createdAt'>[] = [
-  { text: 'SIE - interno despacho (imprimir captura)', url: '', completed: false },
-  { text: 'TDI - bandeja de entrada', url: '', completed: false },
-  { text: 'TDO - portal gestión de obra', url: '', completed: false },
-  { text: 'Liquidaciones (drive Factibilidades)', url: '', completed: false },
-  { text: 'Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones', url: '', completed: false },
-  { text: 'Buscar expedientes en Área Técnica', url: '', completed: false },
+  {
+    text: 'SIE - interno despacho (imprimir captura)',
+    url: 'https://sie-despacho.vercel.app/',
+    completed: false,
+  },
+  {
+    text: 'TDI - bandeja de entrada',
+    url: 'https://tdi.parana.gob.ar/select-profile',
+    completed: false,
+  },
+  {
+    text: 'TDO - portal gestión de obra',
+    url: 'https://tramiteobra.parana.gob.ar/',
+    completed: false,
+  },
+  {
+    text: 'Liquidaciones (drive Factibilidades)',
+    url: 'https://docs.google.com/spreadsheets/d/1sRsMjzUj0Lr6MUP39nEn9lbAf9h2EX2P/edit?gid=301846197#gid=301846197',
+    completed: false,
+  },
+  {
+    text: 'Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones',
+    url: 'https://docs.google.com/spreadsheets/d/1Xso80AxkxM95Z3IRC6Ueczb-Za9BbhP-/edit?gid=1153473258#gid=1153473258',
+    completed: false,
+  },
+  {
+    text: 'Buscar expedientes en Área Técnica',
+    url: '',
+    completed: false,
+  },
+  {
+    text: 'Área Técnica - TDI',
+    url: 'https://drive.google.com/drive/u/0/folders/1pOxTmXXR-CTM44IFG7ciqdL3k-xx2Okc',
+    completed: false,
+  },
+  {
+    text: 'Área Técnica - Informes',
+    url: 'https://docs.google.com/spreadsheets/d/1hukcoap_zFrizpYPmLhbpI1l9H7PODs3/edit?gid=153255938#gid=153255938',
+    completed: false,
+  },
 ];
 
 // 3 tareas iniciales para la pestaña "estadísticas mensuales"
@@ -61,7 +95,7 @@ function getCanonicalDailyRank(text: string): number {
   // 1. SIE - interno despacho (imprimir captura)
   if (t.includes('despacho') || t.includes('captura')) return 0;
   // 2. TDI - bandeja de entrada
-  if (t.includes('tdi')) return 1;
+  if (t.includes('tdi - bandeja') || (t.includes('tdi') && !t.includes('área') && !t.includes('area'))) return 1;
   // 3. TDO - portal gestión de obra
   if (t.includes('tdo')) return 2;
   // 4. Liquidaciones (drive Factibilidades)
@@ -80,6 +114,12 @@ function getCanonicalDailyRank(text: string): number {
     t.includes('alarma')
   ) return 4;
   // 6. Buscar expedientes en Área Técnica
+  if (t.includes('buscar expedientes') || t.includes('buscar expediente')) return 5;
+  // 7. Área Técnica - TDI
+  if ((t.includes('área técnica') || t.includes('area tecnica')) && t.includes('tdi')) return 6;
+  // 8. Área Técnica - Informes
+  if ((t.includes('área técnica') || t.includes('area tecnica')) && (t.includes('informe') || t.includes('informes'))) return 7;
+
   if (t.includes('expediente') || t.includes('área técnica') || t.includes('area tecnica')) return 5;
   if (t.includes('sie')) return 0;
   return 999;
@@ -156,7 +196,7 @@ export default function App() {
       }));
     }
 
-    // Actualizar nombres y consolidar al nuevo esquema oficial de 6 cards
+    // Actualizar nombres y consolidar al esquema oficial de tareas diarias
     const cardPlanosText = 'Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones';
     const cardSieDespachoText = 'SIE - interno despacho (imprimir captura)';
 
@@ -164,7 +204,13 @@ export default function App() {
     const filteredDaily: Task[] = [];
     for (const t of loadedDailyTasks) {
       const lower = t.text.toLowerCase();
-      if (lower.includes('tdi')) {
+      if ((lower.includes('área técnica') || lower.includes('area tecnica')) && lower.includes('tdi')) {
+        filteredDaily.push({ ...t, text: 'Área Técnica - TDI' });
+      } else if ((lower.includes('área técnica') || lower.includes('area tecnica')) && (lower.includes('informe') || lower.includes('informes'))) {
+        filteredDaily.push({ ...t, text: 'Área Técnica - Informes' });
+      } else if (lower.includes('buscar expedientes') || lower.includes('buscar expediente')) {
+        filteredDaily.push({ ...t, text: 'Buscar expedientes en Área Técnica' });
+      } else if (lower.includes('tdi - bandeja') || (lower.includes('tdi') && !lower.includes('área') && !lower.includes('area'))) {
         filteredDaily.push({ ...t, text: 'TDI - bandeja de entrada' });
       } else if (lower.includes('tdo')) {
         filteredDaily.push({ ...t, text: 'TDO - portal gestión de obra' });
@@ -207,19 +253,21 @@ export default function App() {
     }
     loadedDailyTasks = filteredDaily;
 
-    // Asegurar que las 6 tareas oficiales por defecto estén siempre presentes
-    // sin perder ningún enlace (url) cargado por el usuario
+    // Asegurar que las 8 tareas oficiales por defecto estén siempre presentes
+    // Si la tarea existente no tiene enlace y la semilla oficial sí, se le asigna la url oficial
     INITIAL_DAILY_TASKS_SEED.forEach((seedTask) => {
       const rank = getCanonicalDailyRank(seedTask.text);
-      const exists = loadedDailyTasks.some((t) => getCanonicalDailyRank(t.text) === rank);
-      if (!exists) {
+      const existingTask = loadedDailyTasks.find((t) => getCanonicalDailyRank(t.text) === rank);
+      if (!existingTask) {
         loadedDailyTasks.push({
           id: generateId() + '-' + rank,
           text: seedTask.text,
-          url: '',
+          url: seedTask.url,
           completed: false,
           createdAt: Date.now() + rank,
         });
+      } else if (!existingTask.url && seedTask.url) {
+        existingTask.url = seedTask.url;
       }
     });
 
@@ -230,6 +278,8 @@ export default function App() {
     // 4. Liquidaciones (drive Factibilidades)
     // 5. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
     // 6. Buscar expedientes en Área Técnica
+    // 7. Área Técnica - TDI
+    // 8. Área Técnica - Informes
     loadedDailyTasks.sort((a, b) => {
       const rankA = getCanonicalDailyRank(a.text);
       const rankB = getCanonicalDailyRank(b.text);

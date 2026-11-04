@@ -1,0 +1,145 @@
+{
+  "app": "Diario de Tareas - GIS y Estadísticas Paraná",
+  "version": 2,
+  "exportDate": "2026-11-04T10:08:54.213Z",
+  "dailyTasks": [
+    {
+      "id": "1790592003531-19c8jz8-sie",
+      "text": "SIE - interno despacho (imprimir captura)",
+      "url": "https://sie-despacho.vercel.app/",
+      "completed": true,
+      "createdAt": 1790592003531
+    },
+    {
+      "id": "1790343081434-fr7cwgj0",
+      "text": "TDI - bandeja de entrada",
+      "url": "https://tdi.parana.gob.ar/select-profile",
+      "completed": true,
+      "createdAt": 1790343081434
+    },
+    {
+      "id": "1790343081434-f54c4451",
+      "text": "TDO - portal gestión de obra",
+      "url": "https://tramiteobra.parana.gob.ar/",
+      "completed": false,
+      "createdAt": 1790343081435
+    },
+    {
+      "id": "1790343081434-wizy1fg2",
+      "text": "Liquidaciones (drive Factibilidades)",
+      "url": "https://docs.google.com/spreadsheets/d/1sRsMjzUj0Lr6MUP39nEn9lbAf9h2EX2P/edit?gid=301846197#gid=301846197",
+      "completed": false,
+      "createdAt": 1790343081436
+    },
+    {
+      "id": "1792163790003-dj6zl90-3",
+      "text": "Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones",
+      "url": "https://docs.google.com/spreadsheets/d/1Xso80AxkxM95Z3IRC6Ueczb-Za9BbhP-/edit?gid=1153473258#gid=1153473258",
+      "completed": false,
+      "createdAt": 1792163790010
+    },
+    {
+      "id": "1790343081434-cm0lmie4",
+      "text": "Buscar expedientes en Área Técnica",
+      "url": "",
+      "completed": false,
+      "createdAt": 1790343081438
+    },
+    {
+      "id": "1793708897109-5461kcm",
+      "text": "Área Técnica - TDI",
+      "url": "https://drive.google.com/drive/u/0/folders/1pOxTmXXR-CTM44IFG7ciqdL3k-xx2Okc",
+      "completed": false,
+      "createdAt": 1793708897109
+    },
+    {
+      "id": "1793708867940-hhsn2gs",
+      "text": "Área Técnica - Informes",
+      "url": "https://docs.google.com/spreadsheets/d/1hukcoap_zFrizpYPmLhbpI1l9H7PODs3/edit?gid=153255938#gid=153255938",
+      "completed": false,
+      "createdAt": 1793708867940
+    }
+  ],
+  "monthlyTasks": [
+    {
+      "id": "1790858349167-xcppr5k-m-0",
+      "text": "Liquidaciones (Power BI)",
+      "url": "",
+      "completed": false,
+      "createdAt": 1790858349167
+    },
+    {
+      "id": "1790858349167-7gibsmc-m-1",
+      "text": "Expedientes de obra nueva -papel- (Power BI)",
+      "url": "",
+      "completed": false,
+      "createdAt": 1790858349168
+    },
+    {
+      "id": "1790858349167-h3arg4r-m-2",
+      "text": "Autorización de trámites digitales (TDO)",
+      "url": "",
+      "completed": false,
+      "createdAt": 1790858349169
+    }
+  ],
+  "exptesSie": "194",
+  "tasks": [
+    {
+      "id": "1790592003531-19c8jz8-sie",
+      "text": "SIE - interno despacho (imprimir captura)",
+      "url": "https://sie-despacho.vercel.app/",
+      "completed": true,
+      "createdAt": 1790592003531
+    },
+    {
+      "id": "1790343081434-fr7cwgj0",
+      "text": "TDI - bandeja de entrada",
+      "url": "https://tdi.parana.gob.ar/select-profile",
+      "completed": true,
+      "createdAt": 1790343081434
+    },
+    {
+      "id": "1790343081434-f54c4451",
+      "text": "TDO - portal gestión de obra",
+      "url": "https://tramiteobra.parana.gob.ar/",
+      "completed": false,
+      "createdAt": 1790343081435
+    },
+    {
+      "id": "1790343081434-wizy1fg2",
+      "text": "Liquidaciones (drive Factibilidades)",
+      "url": "https://docs.google.com/spreadsheets/d/1sRsMjzUj0Lr6MUP39nEn9lbAf9h2EX2P/edit?gid=301846197#gid=301846197",
+      "completed": false,
+      "createdAt": 1790343081436
+    },
+    {
+      "id": "1792163790003-dj6zl90-3",
+      "text": "Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones",
+      "url": "https://docs.google.com/spreadsheets/d/1Xso80AxkxM95Z3IRC6Ueczb-Za9BbhP-/edit?gid=1153473258#gid=1153473258",
+      "completed": false,
+      "createdAt": 1792163790010
+    },
+    {
+      "id": "1790343081434-cm0lmie4",
+      "text": "Buscar expedientes en Área Técnica",
+      "url": "",
+      "completed": false,
+      "createdAt": 1790343081438
+    },
+    {
+      "id": "1793708897109-5461kcm",
+      "text": "Área Técnica - TDI",
+      "url": "https://drive.google.com/drive/u/0/folders/1pOxTmXXR-CTM44IFG7ciqdL3k-xx2Okc",
+      "completed": false,
+      "createdAt": 1793708897109
+    },
+    {
+      "id": "1793708867940-hhsn2gs",
+      "text": "Área Técnica - Informes",
+      "url": "https://docs.google.com/spreadsheets/d/1hukcoap_zFrizpYPmLhbpI1l9H7PODs3/edit?gid=153255938#gid=153255938",
+      "completed": false,
+      "createdAt": 1793708867940
+    }
+  ]
+}
