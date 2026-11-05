@@ -867,19 +867,37 @@ export default function App() {
             </div>
           ) : (
             <ul className="space-y-2">
-              {currentTasks.map((task, index) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  index={index}
-                  totalTasks={currentTasks.length}
-                  onToggle={handleToggleTask}
-                  onUpdate={handleUpdateTask}
-                  onDelete={handleDeleteTask}
-                  onMoveUp={handleMoveUp}
-                  onMoveDown={handleMoveDown}
-                />
-              ))}
+              {currentTasks.map((task, index) => {
+                const prevTask = index > 0 ? currentTasks[index - 1] : null;
+                const isAreaTecnicaGroupStart =
+                  activeTab === 'daily' &&
+                  (task.text.toLowerCase().includes('área técnica - tdi') ||
+                   task.text.toLowerCase().includes('area tecnica - tdi')) &&
+                  prevTask &&
+                  (prevTask.text.toLowerCase().includes('buscar expedientes') ||
+                   prevTask.text.toLowerCase().includes('área técnica') ||
+                   prevTask.text.toLowerCase().includes('area tecnica'));
+
+                return (
+                  <React.Fragment key={task.id}>
+                    {isAreaTecnicaGroupStart && (
+                      <li aria-hidden="true" className="list-none py-1 px-1">
+                        <div className="h-[2px] w-full bg-slate-300 dark:bg-slate-700 rounded-full" />
+                      </li>
+                    )}
+                    <TaskItem
+                      task={task}
+                      index={index}
+                      totalTasks={currentTasks.length}
+                      onToggle={handleToggleTask}
+                      onUpdate={handleUpdateTask}
+                      onDelete={handleDeleteTask}
+                      onMoveUp={handleMoveUp}
+                      onMoveDown={handleMoveDown}
+                    />
+                  </React.Fragment>
+                );
+              })}
             </ul>
           )}
         </section>
