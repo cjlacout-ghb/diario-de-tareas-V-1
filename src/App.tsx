@@ -52,6 +52,11 @@ const INITIAL_DAILY_TASKS_SEED: Omit<Task, 'id' | 'createdAt'>[] = [
     completed: false,
   },
   {
+    text: 'Área Técnica - TDIs autorizados',
+    url: 'https://drive.google.com/drive/u/0/folders/1pOxTmXXR-CTM44IFG7ciqdL3k-xx2Okc',
+    completed: false,
+  },
+  {
     text: 'Liquidaciones (drive Factibilidades)',
     url: 'https://docs.google.com/spreadsheets/d/1sRsMjzUj0Lr6MUP39nEn9lbAf9h2EX2P/edit?gid=301846197#gid=301846197',
     completed: false,
@@ -64,11 +69,6 @@ const INITIAL_DAILY_TASKS_SEED: Omit<Task, 'id' | 'createdAt'>[] = [
   {
     text: 'Buscar expedientes en Área Técnica',
     url: '',
-    completed: false,
-  },
-  {
-    text: 'Área Técnica - TDI',
-    url: 'https://drive.google.com/drive/u/0/folders/1pOxTmXXR-CTM44IFG7ciqdL3k-xx2Okc',
     completed: false,
   },
   {
@@ -98,9 +98,11 @@ function getCanonicalDailyRank(text: string): number {
   if (t.includes('tdi - bandeja') || (t.includes('tdi') && !t.includes('área') && !t.includes('area'))) return 1;
   // 3. TDO - portal gestión de obra
   if (t.includes('tdo')) return 2;
-  // 4. Liquidaciones (drive Factibilidades)
-  if (t.includes('liquidaciones')) return 3;
-  // 5. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
+  // 4. Área Técnica - TDIs autorizados
+  if ((t.includes('área técnica') || t.includes('area tecnica')) && (t.includes('tdi') || t.includes('autorizado') || t.includes('autorizados'))) return 3;
+  // 5. Liquidaciones (drive Factibilidades)
+  if (t.includes('liquidaciones')) return 4;
+  // 6. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
   if (
     t.includes('planos') ||
     t.includes('eléctricos') ||
@@ -112,15 +114,13 @@ function getCanonicalDailyRank(text: string): number {
     t.includes('aereos') ||
     t.includes('demoliciones') ||
     t.includes('alarma')
-  ) return 4;
-  // 6. Buscar expedientes en Área Técnica
-  if (t.includes('buscar expedientes') || t.includes('buscar expediente')) return 5;
-  // 7. Área Técnica - TDI
-  if ((t.includes('área técnica') || t.includes('area tecnica')) && t.includes('tdi')) return 6;
+  ) return 5;
+  // 7. Buscar expedientes en Área Técnica
+  if (t.includes('buscar expedientes') || t.includes('buscar expediente')) return 6;
   // 8. Área Técnica - Informes
   if ((t.includes('área técnica') || t.includes('area tecnica')) && (t.includes('informe') || t.includes('informes'))) return 7;
 
-  if (t.includes('expediente') || t.includes('área técnica') || t.includes('area tecnica')) return 5;
+  if (t.includes('expediente') || t.includes('área técnica') || t.includes('area tecnica')) return 6;
   if (t.includes('sie')) return 0;
   return 999;
 }
@@ -204,8 +204,8 @@ export default function App() {
     const filteredDaily: Task[] = [];
     for (const t of loadedDailyTasks) {
       const lower = t.text.toLowerCase();
-      if ((lower.includes('área técnica') || lower.includes('area tecnica')) && lower.includes('tdi')) {
-        filteredDaily.push({ ...t, text: 'Área Técnica - TDI' });
+      if ((lower.includes('área técnica') || lower.includes('area tecnica')) && (lower.includes('tdi') || lower.includes('autorizado'))) {
+        filteredDaily.push({ ...t, text: 'Área Técnica - TDIs autorizados' });
       } else if ((lower.includes('área técnica') || lower.includes('area tecnica')) && (lower.includes('informe') || lower.includes('informes'))) {
         filteredDaily.push({ ...t, text: 'Área Técnica - Informes' });
       } else if (lower.includes('buscar expedientes') || lower.includes('buscar expediente')) {
@@ -275,10 +275,10 @@ export default function App() {
     // 1. SIE - interno despacho (imprimir captura)
     // 2. TDI - bandeja de entrada
     // 3. TDO - portal gestión de obra
-    // 4. Liquidaciones (drive Factibilidades)
-    // 5. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
-    // 6. Buscar expedientes en Área Técnica
-    // 7. Área Técnica - TDI
+    // 4. Área Técnica - TDIs autorizados
+    // 5. Liquidaciones (drive Factibilidades)
+    // 6. Planos Eléctricos (drive GIS) / SIE - cargar Subterráneas, Aéreos y Demoliciones
+    // 7. Buscar expedientes en Área Técnica
     // 8. Área Técnica - Informes
     loadedDailyTasks.sort((a, b) => {
       const rankA = getCanonicalDailyRank(a.text);
@@ -871,12 +871,13 @@ export default function App() {
                 const prevTask = index > 0 ? currentTasks[index - 1] : null;
                 const isAreaTecnicaGroupStart =
                   activeTab === 'daily' &&
-                  (task.text.toLowerCase().includes('área técnica - tdi') ||
-                   task.text.toLowerCase().includes('area tecnica - tdi')) &&
+                  (task.text.toLowerCase().includes('área técnica - informes') ||
+                   task.text.toLowerCase().includes('area tecnica - informes') ||
+                   task.text.toLowerCase().includes('área técnica - informe') ||
+                   task.text.toLowerCase().includes('area tecnica - informe')) &&
                   prevTask &&
                   (prevTask.text.toLowerCase().includes('buscar expedientes') ||
-                   prevTask.text.toLowerCase().includes('área técnica') ||
-                   prevTask.text.toLowerCase().includes('area tecnica'));
+                   prevTask.text.toLowerCase().includes('buscar expediente'));
 
                 return (
                   <React.Fragment key={task.id}>
