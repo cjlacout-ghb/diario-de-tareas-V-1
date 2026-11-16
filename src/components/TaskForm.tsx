@@ -95,11 +95,14 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             href="https://drive.google.com/drive/folders/1apxl1Yx5AVeghoH9uD8ME7pKGGUMZ05C"
             target="_blank"
             rel="noopener noreferrer"
-            title="Abrir Certificado Final (Google Drive)"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900 border border-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 dark:border-slate-700 shadow-2xs transition cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+            title="Abrir Drive GIS - Certificado Final (Google Drive)"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-semibold bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900 border border-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 dark:border-slate-700 shadow-2xs transition cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
           >
-            <FileCheck className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-            <span>Certificado Final</span>
+            <FileCheck className="w-4 h-4 shrink-0 text-slate-500 dark:text-slate-400" />
+            <span className="flex flex-col leading-tight text-left">
+              <span>Drive GIS</span>
+              <span>Certificado Final</span>
+            </span>
           </a>
         </div>
 
