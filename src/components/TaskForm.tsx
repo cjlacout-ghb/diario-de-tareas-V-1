@@ -81,7 +81,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
         <div className="flex flex-wrap items-center gap-2">
           <a
-            href="https://dcartografiayde.github.io/IDE-PARANA/obras_privadas/"
+            href="https://atlaspua.parana.gob.ar/backdoor/"
             target="_blank"
             rel="noopener noreferrer"
             title="Abrir IDE Paraná (Obras Privadas)"
