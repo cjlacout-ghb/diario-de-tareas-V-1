@@ -71,3 +71,18 @@ export function getFormattedMonthInSpanish(date: Date = new Date()): string {
   }
 }
 
+/**
+ * Retorna la clave local (YYYY-MM-DD) correspondiente al lunes de la semana calendario de `date`.
+ * Sirve para identificar de forma estable cada semana laboral en horario local.
+ */
+export function getLocalMondayKey(date: Date = new Date()): string {
+  const daysSinceMonday = (date.getDay() + 6) % 7;
+  const mondayDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate() - daysSinceMonday
+  );
+  return getLocalDateString(mondayDate);
+}
+
+

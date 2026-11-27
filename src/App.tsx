@@ -18,11 +18,13 @@ import { TaskItem } from './components/TaskItem';
 import { TaskForm } from './components/TaskForm';
 import { PWAInstallButton } from './components/PWAInstallButton';
 import { HelpModal } from './components/HelpModal';
+import { WeeklyOverdueModal } from './components/WeeklyOverdueModal';
 import { 
   getLocalDateString, 
   getFormattedDateInSpanish, 
   getLocalMonthString, 
-  getFormattedMonthInSpanish 
+  getFormattedMonthInSpanish,
+  getLocalMondayKey 
 } from './utils/date';
 
 // Claves de almacenamiento local (mantenemos la clave diaria previa para preservar datos existentes)
@@ -33,6 +35,7 @@ const STORAGE_KEY_LAST_RESET_MONTHLY = 'gis_parana_tareas_last_reset_month';
 const STORAGE_KEY_ACTIVE_TAB = 'gis_parana_active_tab';
 const STORAGE_KEY_ORDER_V2 = 'gis_parana_tareas_order_v2';
 const STORAGE_KEY_EXPTES_SIE = 'gis_parana_exptes_sie_v1';
+const STORAGE_KEY_WEEKLY_OVERDUE_DISMISSED = 'gis_parana_weekly_overdue_dismissed_v1';
 
 // 8 tareas iniciales para la pestaña "tareas diarias" (orden y enlaces oficiales definitivos)
 const INITIAL_DAILY_TASKS_SEED: Omit<Task, 'id' | 'createdAt'>[] = [
@@ -140,6 +143,7 @@ export default function App() {
   const [formattedMonthText, setFormattedMonthText] = useState<string>('');
 
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isWeeklyOverdueOpen, setIsWeeklyOverdueOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showCompletedMonthly, setShowCompletedMonthly] = useState(false);
@@ -147,6 +151,15 @@ export default function App() {
     const saved = localStorage.getItem(STORAGE_KEY_EXPTES_SIE);
     return saved !== null ? saved : '00';
   });
+
+  const handleDismissWeeklyOverdue = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY_WEEKLY_OVERDUE_DISMISSED, getLocalMondayKey());
+    } catch (err) {
+      console.error('Error guardando cierre del recordatorio semanal', err);
+    }
+    setIsWeeklyOverdueOpen(false);
+  };
 
   const handleExptesSieChange = (val: string) => {
     setExptesSie(val);
@@ -331,6 +344,13 @@ export default function App() {
     }
     setMonthlyTasks(loadedMonthlyTasks);
 
+    // 3. Verificar aviso semanal de expedientes atrasados (cada lunes o primer acceso de la semana hasta cerrarlo con X)
+    const currentWeekKey = getLocalMondayKey();
+    const dismissedWeekKey = localStorage.getItem(STORAGE_KEY_WEEKLY_OVERDUE_DISMISSED);
+    if (dismissedWeekKey !== currentWeekKey) {
+      setIsWeeklyOverdueOpen(true);
+    }
+
     setIsInitialized(true);
   }, []);
 
@@ -381,6 +401,13 @@ export default function App() {
         localStorage.setItem(STORAGE_KEY_LAST_RESET_MONTHLY, currentMonth);
         showToast('Nuevo mes.\nVer Estadísticas mensuales.');
       }
+
+      // 3. Verificar recordatorio semanal al cambiar de día / semana mientras la app sigue abierta
+      const currentWeekKey = getLocalMondayKey();
+      const dismissedWeekKey = localStorage.getItem(STORAGE_KEY_WEEKLY_OVERDUE_DISMISSED);
+      if (dismissedWeekKey !== currentWeekKey) {
+        setIsWeeklyOverdueOpen(true);
+      }
     };
 
     const handleVisibilityChange = () => {
@@ -393,9 +420,11 @@ export default function App() {
     const intervalId = setInterval(checkRollover, 30000);
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', checkRollover);
     return () => {
       clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', checkRollover);
     };
   }, []);
 
@@ -996,6 +1025,9 @@ export default function App() {
 
       {/* Modal de Ayuda e Instrucciones */}
       <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+
+      {/* Aviso semanal de expedientes atrasados */}
+      <WeeklyOverdueModal isOpen={isWeeklyOverdueOpen} onClose={handleDismissWeeklyOverdue} />
     </div>
   );
 }
